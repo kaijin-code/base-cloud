@@ -1,0 +1,44 @@
+spring:
+ application:
+    name: order-consumer
+
+ config:
+   import:
+     - optional:nacos:${spring.application.name}.yaml
+
+ main:
+   web-application-type: reactive
+
+ cloud:
+   sentinel:
+     transport:
+       dashboard: 127.0.0.1:8888
+   nacos:
+     #discovery:
+      #  server-addr: 127.0.0.1:8848
+     config:
+        enabled: true
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        prefix: SpringCloudAlibaba
+
+   gateway:
+     discovery:
+       locator:
+         enabled: false
+     routes:
+       - id: order-consumer #路由ID，没有固定要求，但是要保证唯一，建议配合服务名
+         uri: http://localhost:8080/order-consumer
+         predicates:
+           - Path=*
+
+#spring.cloud.loadbalancer.cache.caffeine.spec=
+
+#spring.cloud.gateway.discovery.locator.enabled=true
+feign:
+  sentinel:
+    enabled: true
+
+logging:
+   level:
+     root: info
